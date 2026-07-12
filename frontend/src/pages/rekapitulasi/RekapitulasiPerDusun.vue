@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { Rekapitulasi } from '@/services/endpoints'
 import PageHeader from '@/components/PageHeader.vue'
+import Skeleton from '@/components/Skeleton.vue'
 import { Map, TrendingUp, BarChart3, Users, Download } from '@lucide/vue'
 
 const data = ref(null)
@@ -42,10 +43,31 @@ const maxTidak = computed(() => {
     </PageHeader>
 
     <div class="p-6 space-y-6">
-      <!-- Loading -->
-      <div v-if="loading" class="text-center py-12 text-[#9CA3AF] text-sm font-medium">Memuat data rekapitulasi...</div>
+      <!-- Skeleton saat loading -->
+      <template v-if="loading">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="i in 4" :key="'sk-card'+i" class="bg-white rounded-xl p-5 border border-[#D5D3C9] shadow-xs flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <Skeleton w="120px" h="12px" />
+              <Skeleton variant="rect" w="32px" h="32px" rounded="lg" />
+            </div>
+            <Skeleton w="80px" h="28px" rounded="lg" />
+            <Skeleton w="100%" h="8px" rounded="full" />
+          </div>
+        </section>
+        <section class="bg-white rounded-xl border border-[#D5D3C9] shadow-xs overflow-hidden">
+          <div class="p-5 border-b border-[#EBE9E0] bg-[#F8F7F2]/50">
+            <Skeleton w="160px" h="18px" />
+          </div>
+          <div class="p-5 space-y-3">
+            <div v-for="i in 4" :key="'sk-row'+i" class="flex gap-4">
+              <Skeleton v-for="j in 7" :key="j" w="80px" h="14px" />
+            </div>
+          </div>
+        </section>
+      </template>
 
-      <template v-if="data && !loading">
+      <template v-else-if="data">
         <!-- Stat Cards -->
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div class="bg-white rounded-xl p-5 border border-[#D5D3C9] shadow-[0_1px_3px_rgba(0,0,0,0.06)] flex flex-col gap-3">

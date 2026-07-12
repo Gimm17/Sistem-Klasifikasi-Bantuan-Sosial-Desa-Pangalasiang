@@ -5,16 +5,21 @@ import { DataTraining, downloadBlob } from '@/services/endpoints'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import ImportModal from '@/components/ImportModal.vue'
+import Skeleton from '@/components/Skeleton.vue'
 import { Plus, Filter, Edit3, Trash2, ChevronLeft, ChevronRight, FileSpreadsheet, Upload, Download } from '@lucide/vue'
 
 const items = ref([])
 const meta = ref(null)
+const loading = ref(false)
 const filters = ref({ label_kelas: '', page: 1 })
 
 async function load() {
-  const res = await DataTraining.list(filters.value)
-  items.value = res.data
-  meta.value = res.meta
+  loading.value = true
+  try {
+    const res = await DataTraining.list(filters.value)
+    items.value = res.data
+    meta.value = res.meta
+  } finally { loading.value = false }
 }
 onMounted(load)
 watch(filters, load, { deep: true })
@@ -104,7 +109,12 @@ const showImport = ref(false)
                   </button>
                 </td>
               </tr>
-              <tr v-if="!items.length">
+              <template v-if="loading && !items.length">
+                <tr v-for="i in 5" :key="'sk'+i" class="border-b border-[#EBE9E0]">
+                  <td v-for="j in 6" :key="j" class="px-4 py-3.5"><Skeleton w="70%" h="12px" /></td>
+                </tr>
+              </template>
+              <tr v-else-if="!items.length">
                 <td colspan="6" class="px-4 py-10 text-center text-[#9CA3AF] text-sm font-medium">Belum ada data training berlabel.</td>
               </tr>
             </tbody>

@@ -4,10 +4,12 @@ import { RouterLink } from 'vue-router'
 import { Approval } from '@/services/endpoints'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
+import Skeleton from '@/components/Skeleton.vue'
 import { CheckCircle2, XCircle, Edit3, AlertCircle, ArrowRight, Filter, ChevronLeft, ChevronRight } from '@lucide/vue'
 
 const items = ref([])
 const meta = ref(null)
+const loading = ref(false)
 const filters = ref({ prediksi_kelas: '', page: 1 })
 
 // modal aksi
@@ -18,8 +20,11 @@ const busy = ref(false)
 const errMsg = ref('')
 
 async function load() {
-  const res = await Approval.queue(filters.value)
-  items.value = res.data; meta.value = res.meta
+  loading.value = true
+  try {
+    const res = await Approval.queue(filters.value)
+    items.value = res.data; meta.value = res.meta
+  } finally { loading.value = false }
 }
 onMounted(load)
 watch(filters, load, { deep: true })
@@ -99,7 +104,12 @@ async function submit() {
                   </button>
                 </td>
               </tr>
-              <tr v-if="!items.length">
+              <template v-if="loading && !items.length">
+                <tr v-for="i in 5" :key="'sk'+i" class="border-b border-[#EBE9E0]">
+                  <td v-for="j in 4" :key="j" class="px-4 py-3.5"><Skeleton w="70%" h="12px" /></td>
+                </tr>
+              </template>
+              <tr v-else-if="!items.length">
                 <td colspan="4" class="px-4 py-10 text-center text-[#9CA3AF] text-sm font-medium">Antrean approval saat ini kosong.</td>
               </tr>
             </tbody>

@@ -8,6 +8,7 @@ import AtributBarChart from '@/components/AtributBarChart.vue'
 import AkurasiWidget from '@/components/AkurasiWidget.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
+import Skeleton from '@/components/Skeleton.vue'
 import { Users, UserCheck, CheckCircle2, XCircle, Clock, BookOpen, Zap, ClipboardCheck, BarChart3, Layers, ArrowRight, Printer, X, FileDown } from '@lucide/vue'
 
 const auth = useAuthStore()
@@ -69,15 +70,26 @@ const cards = (s) => [
 
       <!-- Kartu statistik -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div v-for="c in cards(stats || {})" :key="c.label" :class="c.bg" class="rounded-xl border shadow-xs p-4 transition-all hover:shadow-md flex flex-col justify-between">
-          <div class="flex items-center justify-between gap-2 mb-3">
-            <p class="text-xs text-[#4B5563] font-medium leading-tight">{{ c.label }}</p>
-            <div :class="c.iconBg" class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
-              <component :is="c.icon" class="w-4 h-4" />
+        <template v-if="loading && !stats">
+          <div v-for="i in 6" :key="'sk'+i" class="bg-white rounded-xl border border-[#D5D3C9] shadow-xs p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <Skeleton w="70px" h="12px" />
+              <Skeleton variant="rect" w="32px" h="32px" rounded="lg" />
             </div>
+            <Skeleton w="60px" h="24px" rounded="lg" />
           </div>
-          <p class="text-2xl font-bold tnum" :class="c.color">{{ loading ? '…' : (c.value ?? 0) }}</p>
-        </div>
+        </template>
+        <template v-else>
+          <div v-for="c in cards(stats || {})" :key="c.label" :class="c.bg" class="rounded-xl border shadow-xs p-4 transition-all hover:shadow-md flex flex-col justify-between">
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <p class="text-xs text-[#4B5563] font-medium leading-tight">{{ c.label }}</p>
+              <div :class="c.iconBg" class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
+                <component :is="c.icon" class="w-4 h-4" />
+              </div>
+            </div>
+            <p class="text-2xl font-bold tnum" :class="c.color">{{ c.value ?? 0 }}</p>
+          </div>
+        </template>
       </div>
 
       <!-- Baris Grafik & Analisis Skripsi -->
@@ -88,7 +100,8 @@ const cards = (s) => [
             <h3 class="font-semibold text-[#1F2937] text-base mb-1">Distribusi Hasil Klasifikasi</h3>
             <p class="text-xs text-[#4B5563] mb-4">Perbandingan warga terprediksi layak vs tidak layak</p>
           </div>
-          <DistribusiChart :layak="stats?.total_layak ?? 0" :tidak-layak="stats?.total_tidak_layak ?? 0" />
+          <template v-if="loading && !stats"><Skeleton w="100%" h="180px" rounded="lg" /></template>
+          <DistribusiChart v-else :layak="stats?.total_layak ?? 0" :tidak-layak="stats?.total_tidak_layak ?? 0" />
         </div>
 
         <!-- Atribut Berpengaruh (Skripsi) -->
@@ -100,7 +113,8 @@ const cards = (s) => [
             </h3>
             <p class="text-xs text-[#4B5563]">Bobot pengaruh atribut pada probabilitas Naive Bayes</p>
           </div>
-          <AtributBarChart :items="stats?.atribut_berpengaruh || []" />
+          <template v-if="loading && !stats"><Skeleton w="100%" h="200px" rounded="lg" /></template>
+          <AtributBarChart v-else :items="stats?.atribut_berpengaruh || []" />
         </div>
 
         <!-- Evaluasi Model Terakhir (Skripsi) -->

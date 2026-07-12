@@ -5,6 +5,7 @@ import { Warga, Klasifikasi } from '@/services/endpoints'
 import { useAuthStore } from '@/stores/auth'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
+import Skeleton from '@/components/Skeleton.vue'
 import { Zap, User, History, ArrowRight, Clock, CheckCircle, AlertCircle } from '@lucide/vue'
 
 const route = useRoute()
@@ -52,7 +53,30 @@ const rupiah = (n) => 'Rp' + Number(n || 0).toLocaleString('id-ID')
         <AlertCircle class="w-4 h-4 flex-shrink-0" />
         <span>{{ error }}</span>
       </div>
-      <div v-if="loading" class="py-12 text-center text-sm text-[#9CA3AF] font-medium">Memuat data warga…</div>
+      <template v-if="loading">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white rounded-xl shadow-xs border border-[#D5D3C9] p-6 space-y-4">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#EBE9E0]">
+              <Skeleton variant="rect" w="20px" h="20px" rounded="full" />
+              <Skeleton w="140px" h="14px" />
+            </div>
+            <div v-for="i in 8" :key="'sk'+i" class="flex justify-between pt-2">
+              <Skeleton w="100px" h="12px" />
+              <Skeleton w="120px" h="12px" />
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-xs border border-[#D5D3C9] p-6 space-y-4">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#EBE9E0]">
+              <Skeleton variant="rect" w="20px" h="20px" rounded="full" />
+              <Skeleton w="180px" h="14px" />
+            </div>
+            <div v-for="i in 2" :key="'skr'+i" class="p-4 rounded-xl border border-[#E5E3D9] bg-[#F8F7F2] space-y-3">
+              <div class="flex justify-between"><Skeleton w="80px" h="14px" /><Skeleton w="60px" h="12px" /></div>
+              <Skeleton w="100%" h="14px" />
+            </div>
+          </div>
+        </div>
+      </template>
 
       <div v-if="warga" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl shadow-xs border border-[#D5D3C9] p-6 space-y-4">

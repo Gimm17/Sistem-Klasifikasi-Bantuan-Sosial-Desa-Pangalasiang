@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { ActivityLogs } from '@/services/endpoints'
 import PageHeader from '@/components/PageHeader.vue'
+import Skeleton from '@/components/Skeleton.vue'
 import { History, Clock, User, Activity } from '@lucide/vue'
 
 const items = ref([])
@@ -62,8 +63,13 @@ const labelAksi = {
                 </td>
                 <td class="px-4 py-3.5 text-[#4B5563] text-xs leading-relaxed">{{ log.description }}</td>
               </tr>
-              <tr v-if="!items.length">
-                <td colspan="4" class="px-4 py-10 text-center text-[#9CA3AF] text-sm font-medium">{{ loading ? 'Memuat jejak audit…' : 'Belum ada catatan aktivitas tercatat.' }}</td>
+              <template v-if="loading && !items.length">
+                <tr v-for="i in 5" :key="'sk'+i" class="border-b border-[#EBE9E0]">
+                  <td v-for="j in 4" :key="j" class="px-4 py-3.5"><Skeleton w="70%" h="12px" /></td>
+                </tr>
+              </template>
+              <tr v-else-if="!items.length">
+                <td colspan="4" class="px-4 py-10 text-center text-[#9CA3AF] text-sm font-medium">Belum ada catatan aktivitas tercatat.</td>
               </tr>
             </tbody>
           </table>
