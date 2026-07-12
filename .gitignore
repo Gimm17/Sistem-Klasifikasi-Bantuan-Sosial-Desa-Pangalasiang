@@ -13,6 +13,14 @@ DESIGN.md
 claude --resume 3e8538a4-97d3-4c52-8edc-aee1098f3a8a.txt
 claude --resume 4bf3c9cd-ce6b-4c67-9514-c3fe60ee4ff9.txt
 claude --resume ea65a309-3e6a-4636-a349-734cf20d875f.txt
+claude --resume 0f772b69-be6b-4580-b58f-ca2c8edd7174.txt
+claude --resume 28525b08-720b-4d5b-9c28-1cbf11aaa75d.txt
+id_rsa.ppk
+id_rsa
+id_rsa.pub
+pwsupersecretcpanel.txt
+PANDUAN_AKSES_CPANEL_SSH.md
+
 
 # ──────────────────────────────────────────────────────────
 # 2. Credential / security files (NEVER commit)

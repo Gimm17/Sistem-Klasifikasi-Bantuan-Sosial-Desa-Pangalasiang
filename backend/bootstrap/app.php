@@ -25,6 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
+
+        // SPA: guest redirect ke /login (Vue route), BUKAN route('login').
+        // Tanpa ini, middleware Authenticate memanggil route('login') yang tidak ada
+        // dan melempar RouteNotFoundException → 500 bukan 401 pada API request.
+        $middleware->redirectGuestsTo('/login');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
