@@ -71,7 +71,7 @@ const cards = (s) => [
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <div v-for="c in cards(stats || {})" :key="c.label" :class="c.bg" class="rounded-xl border shadow-xs p-4 transition-all hover:shadow-md flex flex-col justify-between">
           <div class="flex items-center justify-between gap-2 mb-3">
-            <p class="text-xs text-[#4B5563] font-medium leading-tight truncate">{{ c.label }}</p>
+            <p class="text-xs text-[#4B5563] font-medium leading-tight">{{ c.label }}</p>
             <div :class="c.iconBg" class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
               <component :is="c.icon" class="w-4 h-4" />
             </div>
