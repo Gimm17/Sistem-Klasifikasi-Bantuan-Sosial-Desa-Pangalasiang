@@ -10,10 +10,35 @@ import api from '@/services/api'
  *   3. GET  /api/me               -> ambil data user login
  *
  * Role: 'admin' | 'approver' | 'superadmin' (lihat docs/architecture.md §7).
+ *
+ * Optimistik cache (performa): user disalin ke localStorage saat login/fetchUser
+ * agar pada cold-load halaman ter-auth, route guard tampilkan UI segera tanpa
+ * menunggu /api/me. fetchUser() tetap jalan di background untuk verifikasi;
+ * jika 401, cache dibersihkan & user di-logout.
  */
+const USER_CACHE_KEY = 'siklas_user_cache'
+
+function loadCachedUser() {
+  try {
+    const raw = localStorage.getItem(USER_CACHE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function saveCachedUser(user) {
+  try {
+    if (user) localStorage.setItem(USER_CACHE_KEY, JSON.stringify(user))
+    else localStorage.removeItem(USER_CACHE_KEY)
+  } catch {
+    // localStorage mungkin diblokir (private mode) — abaikan, cache best-effort
+  }
+}
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null,
+    user: loadCachedUser(),
     initialized: false, // apakah fetchUser awal sudah pernah dijalankan
   }),
 
@@ -32,6 +57,7 @@ export const useAuthStore = defineStore('auth', {
       const { data } = await api.post('/api/login', credentials)
       this.user = data.data ?? data
       this.initialized = true
+      saveCachedUser(this.user)
       return this.user
     },
 
@@ -42,10 +68,12 @@ export const useAuthStore = defineStore('auth', {
         // sehingga data.data adalah objek user yang sebenarnya
         this.user = data.data ?? data
         this.initialized = true
+        saveCachedUser(this.user)
         return this.user
       } catch (e) {
         this.user = null
         this.initialized = true
+        saveCachedUser(null)
         throw e
       }
     },
@@ -57,6 +85,7 @@ export const useAuthStore = defineStore('auth', {
         // abaikan error jaringan saat logout
       } finally {
         this.user = null
+        saveCachedUser(null)
       }
     },
   },

@@ -19,5 +19,25 @@ export default defineConfig({
   build: {
     outDir: '../backend/public/dist',
     emptyOutDir: true,
+    // Rolldown (Vite 8+) chunk strategy:
+    //   vendor → vue + pinia + vue-router + axios + chart.js (cached across deploys)
+    //   lucide  → semua icon @lucide/vue digabung jadi 1 chunk (mengurangi 19 req → 1)
+    // ponytail: dashboard dan page lain tetap lazy-loaded per route via dynamic import.
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'vendor',
+              test: /node_modules\/(vue|pinia|vue-router|axios|chart\.js|vue-chartjs)\//,
+            },
+            {
+              name: 'lucide',
+              test: /node_modules\/@lucide\//,
+            },
+          ],
+        },
+      },
+    },
   },
 })
