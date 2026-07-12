@@ -11,7 +11,9 @@ import axios from 'axios'
  * semua pemanggilan API lewat instance ini (atau modul service yang membungkusnya).
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+  // Production (same-origin): baseURL kosong → relative path '/api/...'
+  // Dev cross-origin: set VITE_API_BASE_URL=http://localhost:8000 di frontend/.env
+  baseURL: import.meta.env.VITE_API_BASE_URL || '',
   withCredentials: true,
   withXSRFToken: true,
   headers: {

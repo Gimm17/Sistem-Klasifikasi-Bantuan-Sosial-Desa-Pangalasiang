@@ -18,6 +18,12 @@
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
+
+# Frontend build output — tracked for cPanel deployment (SPA served by Laravel)
+!public/dist/
+!public/dist/**
+/public/dist/**/*.map
+
 /storage/*.key
 /storage/pail
 /vendor
