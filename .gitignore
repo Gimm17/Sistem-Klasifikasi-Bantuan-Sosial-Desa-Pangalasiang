@@ -83,7 +83,11 @@ lerna-debug.log*
 # ──────────────────────────────────────────────────────────
 # 7. The model (experimental duplicate) — exclude entirely
 # ──────────────────────────────────────────────────────────
-the model/
+# NOTE: "the model/" is kept as an archive of early-stage drafts
+# (RekapitulasiController, dusun migration, PDF blade templates)
+# that were later merged into backend/. It is pushed as a reference,
+# but is NOT used by the app at runtime.
+# the model/
 
 # ──────────────────────────────────────────────────────────
 # 8. Temporary / generated files
