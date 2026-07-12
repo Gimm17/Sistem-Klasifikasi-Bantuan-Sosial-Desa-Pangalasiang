@@ -55,7 +55,15 @@ async function submit() {
     </div>
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-[420px] relative z-10 px-4 sm:px-0">
-      <div class="bg-white py-8 px-6 sm:px-10 rounded-2xl shadow-lg border border-[#E5E3D9]">
+      <div class="relative bg-white py-8 px-6 sm:px-10 rounded-2xl shadow-lg border border-[#E5E3D9]">
+        <!-- Loading overlay: shared-host login round-trip can take ~20s -->
+        <div
+          v-if="loading"
+          class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white/80 backdrop-blur-sm rounded-2xl"
+        >
+          <div class="w-9 h-9 border-3 border-[#96B6C5] border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm font-semibold text-[#4B5563]">Memverifikasi…</p>
+        </div>
         <form @submit.prevent="submit" class="space-y-5">
           <div v-if="expiredMsg" class="flex items-start gap-3 text-sm text-[#856404] bg-[#FFF3CD] border border-[#856404]/20 p-3.5 rounded-xl font-medium">
             <AlertCircle class="w-5 h-5 text-[#856404] flex-shrink-0 mt-0.5" />
