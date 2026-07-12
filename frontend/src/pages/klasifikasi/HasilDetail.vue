@@ -7,6 +7,7 @@ import StatusBadge from '@/components/StatusBadge.vue'
 import ProbabilityBreakdownTable from '@/components/ProbabilityBreakdownTable.vue'
 import ProbabilityGauge from '@/components/ProbabilityGauge.vue'
 import LikelihoodBarChart from '@/components/LikelihoodBarChart.vue'
+import Skeleton from '@/components/Skeleton.vue'
 import { User, CreditCard, Cpu, ShieldCheck, BarChart3, TrendingUp, Table, AlertTriangle, FileText } from '@lucide/vue'
 
 const route = useRoute()
@@ -34,7 +35,18 @@ const bd = (h) => h?.breakdown ?? {}
         <AlertTriangle class="w-4 h-4 flex-shrink-0" />
         <span>{{ error }}</span>
       </div>
-      <div v-if="loading" class="text-[#9CA3AF] py-12 text-center text-sm font-medium">Memuat rincian perhitungan klasifikasi…</div>
+      <template v-if="loading">
+        <div class="bg-white rounded-xl shadow-xs p-5 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm border border-[#D5D3C9]">
+          <div v-for="i in 4" :key="'sk'+i" class="p-3 bg-[#F8F7F2] rounded-xl border border-[#EBE9E0] space-y-2">
+            <Skeleton w="90px" h="11px" />
+            <Skeleton w="120px" h="16px" />
+          </div>
+        </div>
+        <div v-for="i in 3" :key="'skb'+i" class="bg-white rounded-xl shadow-xs p-6 border border-[#D5D3C9] space-y-4">
+          <Skeleton w="200px" h="16px" />
+          <Skeleton w="100%" h="160px" rounded="lg" />
+        </div>
+      </template>
 
       <div v-if="hasil" class="space-y-6">
         <!-- Ringkas -->
