@@ -92,7 +92,7 @@ const maxTidak = computed(() => {
                 <Users class="w-4 h-4 text-[#675d4b]" />
               </span>
             </div>
-            <p class="text-2xl font-bold text-[#211B0D]">0</p>
+            <p class="text-2xl font-bold text-[#211B0D]">{{ (data.total_layak || 0) + (data.total_tidak_layak || 0) }}</p>
             <p class="text-xs font-semibold text-[#4E4635]">Seluruh wilayah</p>
           </div>
         </section>
