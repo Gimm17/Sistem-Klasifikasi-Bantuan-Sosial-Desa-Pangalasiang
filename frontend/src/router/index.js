@@ -90,8 +90,11 @@ const router = createRouter({ history: createWebHistory(), routes })
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
 
-  // saat refresh, coba ambil user berdasarkan cookie sesi yang aktif
+  // Pada cold-load: jika user sudah ada dari cache (localStorage), lewati
+  // fetchUser() agar halaman langsung render. fetchUser() dipicu di background
+  // oleh App.vue sehingga sesi tetap terverifikasi tanpa memblokir navigasi.
   if (to.meta.auth !== undefined && !auth.isAuthenticated) {
+    // Tidak ada cache — harus fetch synchronous (belum bisa tampilkan apapun)
     try { await auth.fetchUser() } catch { /* belum login */ }
   }
 

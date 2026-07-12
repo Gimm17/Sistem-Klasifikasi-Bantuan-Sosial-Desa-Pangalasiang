@@ -1,28 +1,20 @@
+# SIKLAS-NB - alt-php84 + Laravel SPA
+AddHandler application/x-httpd-alt-php84 .php .php8 .phtml
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
-
     RewriteEngine On
-
-    # Handle Authorization Header
-    RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-    # Handle X-XSRF-Token Header
-    RewriteCond %{HTTP:x-xsrf-token} .
-    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
-
-    # Redirect Trailing Slashes If Not A Folder...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
-
-    # Send Requests To Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteBase /
+    RewriteRule ^index\.php$ - [L]
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
 </IfModule>
+<FilesMatch "\.(env|log|lock|bak|sql|sqlite|phpunit|git)">
+    Require all denied
+</FilesMatch>
 
 # --- Performance: Gzip/Brotli compression (LiteSpeed supports mod_deflate) ---
 # ponytail: content-encoding akan muncul setelah deploy. Hapus blok ini jika host
@@ -30,7 +22,6 @@
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml application/rss+xml image/svg+xml
 </IfModule>
-# Fallback untuk LiteSpeed lsapi yang mungkin tidak honor AddOutputFilterByType
 <IfModule mod_brotli.c>
     AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml application/rss+xml image/svg+xml
 </IfModule>
@@ -39,15 +30,12 @@
 # ponytail: Vite menghasilkan filename ber-hash (index-AbC12.js) jadi cache-immutable aman.
 <IfModule mod_expires.c>
     ExpiresActive On
-    # HTML: no-cache (always revalidate untuk deploy baru)
     ExpiresByType text/html "access plus 0 seconds"
-    # Hashed SPA assets: immutable 1 year
     ExpiresByType text/javascript "access plus 1 year"
     ExpiresByType application/javascript "access plus 1 year"
     ExpiresByType text/css "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
-    # API JSON: no-cache
     ExpiresByType application/json "access plus 0 seconds"
 </IfModule>
 <IfModule mod_headers.c>
