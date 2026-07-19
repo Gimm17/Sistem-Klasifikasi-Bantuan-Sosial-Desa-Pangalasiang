@@ -78,18 +78,21 @@ Lihat [docs/implementation_plan.md](./docs/implementation_plan.md) untuk detail 
 | **+** Soft-delete warga + **NIK reusable** + sembunyikan hasil yatim (dashboard/klasifikasi/approval) | ✅ selesai |
 | **+** PDF Rincian KK opsional **sertakan foto rumah** (`?include_foto=1`) | ✅ selesai |
 | **+** **Deploy produksi** `https://siklas.pinnhost.my.id` (cPanel, PHP 8.4, LiteSpeed, MySQL) | ✅ selesai |
+| **+** **Export warga untuk role approver** (CSV/XLSX) + fix `array_flip()` fatal saat ada warga soft-delete dengan NIK NULL | ✅ selesai |
 
 ## Pengujian otomatis
 
-Feature test PHPUnit **33/33 lulus** (112 assertion):
+Feature test PHPUnit **37/37 lulus** (123 assertion):
 - `tests/Unit/NaiveBayesServiceTest.php` — verifikasi matematis mesin NB (7 test).
 - `tests/Feature/WargaFotoTest.php` — galeri foto + validasi (8 test).
 - `tests/Feature/WargaSoftDeleteTest.php` — NIK reuse + hasil yatim (3 test).
-- `tests/Feature/ImportWargaTest.php` — CSV/XLSX + bulk (5 test).
+- `tests/Feature/ImportWargaTest.php` — CSV/XLSX + bulk (9 test, bertambah 4 regresi import + validasi NIK).
 - `tests/Feature/KlasifikasiPeriodeTest.php` — batasan #3 (data N bulan terakhir).
+- `tests/Feature/WargaExportRoleTest.php` — role:admin,approver untuk export (3 test).
+- `tests/Feature/WargaImportProcessorNullNikTest.php` — konstruktor tidak gagal saat ada soft-delete nik NULL (1 test).
 
 ```bash
-cd backend && php artisan test      # 33/33
+cd backend && php artisan test      # 37/37
 ```
 
 ## Deploy ke cPanel

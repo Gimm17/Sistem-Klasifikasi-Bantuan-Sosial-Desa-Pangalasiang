@@ -37,7 +37,12 @@ class WargaImportProcessor
         // withTrashed(): NIK pada baris soft-deleted tetap memakai constraint unique
         // di DB, jadi harus ikut dihitung sbg duplikat (jangan biarkan lolos lalu
         // Warga::create melempar QueryException tidak tertangkap -> 500).
-        $this->existingNik = Warga::withTrashed()->pluck('nik')->flip();
+        // Filter null: warga soft-deleted di-null NIK-nya (agar NIK dapat dipakai ulang),
+        // array_flip() menolak nilai null → buang dulu sebelum flip.
+        $this->existingNik = Warga::withTrashed()
+            ->whereNotNull('nik')
+            ->pluck('nik')
+            ->flip();
     }
 
     /**
