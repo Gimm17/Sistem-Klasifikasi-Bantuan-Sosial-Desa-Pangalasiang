@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import PageHeader from '@/components/PageHeader.vue'
 import {
-  HelpCircle,
   BookOpen,
   Eye,
   BrainCircuit,
@@ -18,23 +17,45 @@ import {
   XCircle,
   AlertTriangle,
   Info,
+  ArrowRight,
+  ArrowDown,
+  Database,
+  Calculator,
+  Save,
+  Cpu,
+  BarChart3,
 } from '@lucide/vue'
-
-// Gambar (di-bundle Vite, hashed, cache-bust). Sumber: documentation/gambar_svg/.
-import imgWorkflow from '@/assets/dokumentasi/Gambar_4.1_workflow_5tahap.svg'
-import imgApproval from '@/assets/dokumentasi/Gambar_6.5_alur_approval.svg'
-import imgAudit from '@/assets/dokumentasi/Gambar_10.1_keamanan_audit.svg'
-import imgKonsep from '@/assets/dokumentasi/Gambar_8.1_konsep_naive_bayes.svg'
-import imgTraining from '@/assets/dokumentasi/Gambar_8.3_proses_training.svg'
-import imgPrediksi from '@/assets/dokumentasi/Gambar_8.4_alur_prediksi.svg'
-import imgEvaluasi from '@/assets/dokumentasi/Gambar_9.1_evaluasi_metode.svg'
-import imgConfusion from '@/assets/dokumentasi/Gambar_9.2_confusion_matrix.svg'
 
 const tab = ref('panduan')
 const tabs = [
   { key: 'panduan', label: 'Panduan Penggunaan', icon: BookOpen },
   { key: 'baca', label: 'Cara Baca Hasil', icon: Eye },
   { key: 'nb', label: 'Naive Bayes', icon: BrainCircuit },
+]
+
+// Flow diagram data (HTML/CSS inline — responsif, branded, padat).
+const workflowSteps = [
+  { n: 1, title: 'Training AI', sub: 'Data latih 120 data\n→ Model NB', role: 'Admin', icon: BrainCircuit },
+  { n: 2, title: 'Input & Validasi', sub: 'Draft → Divalidasi\n+ Foto rumah', role: 'Operator', icon: Users },
+  { n: 3, title: 'Klasifikasi', sub: 'Batch / Satuan\nLayak / Tdk Layak', role: 'Admin', icon: Zap },
+  { n: 4, title: 'Approval', sub: 'Setujui / Tolak\nOverride + catatan', role: 'Kades', icon: ClipboardCheck },
+  { n: 5, title: 'Rekap & Laporan', sub: 'Per dusun\nCetak PDF', role: 'Semua', icon: FileDown },
+]
+
+const trainingSteps = [
+  { n: 1, title: 'Kumpulkan Data Latih', sub: '120 data\n60 Layak / 60 Tdk', icon: Database },
+  { n: 2, title: 'Hitung Prior P(C)', sub: 'P(C) = count(C) / total\nP(layak)=0.50', icon: Calculator },
+  { n: 3, title: 'Hitung Likelihood', sub: 'P(Xᵢ|C) + Laplace\nα = 1', icon: Cpu },
+  { n: 4, title: 'Simpan Model', sub: 'model_probabilitas\nmodel_versions', icon: Save },
+]
+
+const prediksiSteps = [
+  { n: 1, title: 'Input Warga', sub: 'Penghasilan, Pekerjaan, Tanggungan, Kondisi Rumah' },
+  { n: 2, title: 'Kategorisasi / Binning', sub: 'Angka mentah → label kategori' },
+  { n: 3, title: 'Hitung Log-Score', sub: 'ln P(C) + Σ ln P(Xᵢ|C)  per kelas' },
+  { n: 4, title: 'Normalisasi Log-Sum-Exp', sub: '→ P(Layak|X), P(Tidak Layak|X)' },
+  { n: 5, title: 'Prediksi', sub: 'Kelas dengan probabilitas terbesar' },
+  { n: 6, title: 'Simpan Hasil', sub: 'Breakdown + status Pending Approval' },
 ]
 
 const steps = [
@@ -138,7 +159,20 @@ const glossary = [
         <section class="bg-white rounded-xl border border-[#D5D3C9] p-6 space-y-4">
           <h3 class="text-base font-bold text-[#1F2937]">Alur Kerja 5 Tahap</h3>
           <p class="text-sm text-[#4B5563]">SIKLAS-NB memakai prinsip Pemisahan Wewenang (Separation of Duties) sesuai birokrasi desa.</p>
-          <img :src="imgWorkflow" alt="Alur kerja 5 tahap SIKLAS-NB" class="w-full rounded-xl border border-[#D5D3C9] bg-[#F8F7F2] p-3" />
+          <div class="flex flex-col gap-2">
+            <template v-for="(s, i) in workflowSteps" :key="s.n">
+              <div class="flex items-center gap-4 p-3 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0] shadow-xs">
+                <div class="w-10 h-10 rounded-xl bg-[#1F2937] text-white flex items-center justify-center font-bold text-sm flex-shrink-0">{{ s.n }}</div>
+                <component :is="s.icon" class="w-5 h-5 text-[#96B6C5] flex-shrink-0" />
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-[#1F2937]">{{ s.title }}</p>
+                  <p class="text-xs text-[#4B5563] whitespace-pre-line leading-snug">{{ s.sub }}</p>
+                </div>
+                <span class="text-[11px] font-semibold text-[#4A3F30] bg-[#EEE0C9] px-2 py-1 rounded-full flex-shrink-0">{{ s.role }}</span>
+              </div>
+              <div v-if="i < workflowSteps.length - 1" class="flex justify-center text-[#96B6C5]"><ArrowDown class="w-5 h-5" /></div>
+            </template>
+          </div>
           <ol class="space-y-2 text-sm text-[#4B5563] list-decimal list-inside">
             <li><strong>Training Model</strong> (admin) — melatih "otak" Naive Bayes memakai data historis berlabel.</li>
             <li><strong>Input + Foto + Validasi</strong> (admin) — masukkan data warga, unggah foto rumah, tetapkan label kondisi.</li>
@@ -198,7 +232,22 @@ const glossary = [
         <!-- Alur approval -->
         <section class="bg-white rounded-xl border border-[#D5D3C9] p-6 space-y-4">
           <h3 class="text-base font-bold text-[#1F2937]">Alur Approval (Kepala Desa / Sekdes)</h3>
-          <img :src="imgApproval" alt="Alur approval: Setujui / Tolak / Override" class="w-full rounded-xl border border-[#D5D3C9] bg-[#F8F7F2] p-3" />
+          <div class="flex flex-col md:flex-row items-stretch gap-2">
+            <div class="flex-1 p-3 rounded-xl bg-[#E6F0F4] border border-[#96B6C5]/30 text-center">
+              <p class="text-xs font-bold text-[#1A3B47]">Hasil AI</p>
+              <p class="text-[11px] text-[#4B5563] mt-1">Prediksi + breakdown<br />status: pending</p>
+            </div>
+            <div class="flex items-center justify-center text-[#96B6C5]"><ArrowRight class="w-5 h-5 hidden md:block" /><ArrowDown class="w-5 h-5 md:hidden" /></div>
+            <div class="flex-1 p-3 rounded-xl bg-[#F8F7F2] border border-[#D5D3C9] text-center">
+              <p class="text-xs font-bold text-[#1F2937]">Kades Tinjau</p>
+              <p class="text-[11px] text-[#4B5563] mt-1">Baca probabilitas<br />& atribut berpengaruh</p>
+            </div>
+            <div class="flex items-center justify-center text-[#96B6C5]"><ArrowRight class="w-5 h-5 hidden md:block" /><ArrowDown class="w-5 h-5 md:hidden" /></div>
+            <div class="flex-1 p-3 rounded-xl bg-[#1F2937] text-white text-center">
+              <p class="text-xs font-bold">Keputusan</p>
+              <p class="text-[11px] text-gray-300 mt-1">Tercatat di audit<br />+ catatan alasan</p>
+            </div>
+          </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div class="p-3 rounded-xl bg-[#D4EDDA]/40 border border-[#155724]/20">
               <p class="text-xs font-bold text-[#155724] flex items-center gap-1.5"><CheckCircle2 class="w-4 h-4" /> Setujui</p>
@@ -221,7 +270,6 @@ const glossary = [
             <ShieldCheck class="w-5 h-5 text-[#96B6C5]" />
             <span>Keamanan & Audit</span>
           </h3>
-          <img :src="imgAudit" alt="Keamanan & audit sistem" class="w-full rounded-xl border border-[#D5D3C9] bg-[#F8F7F2] p-3" />
           <ul class="space-y-1.5 text-sm text-[#4B5563] list-disc list-inside">
             <li>Login berbasis cookie (Sanctum), tahan serangan CSRF.</li>
             <li>Rate limit 5× salah per menit.</li>
@@ -333,7 +381,28 @@ Breakdown per atribut (Likelihood P(Atribut | Kelas)):
             Naive Bayes berdasar pada <strong>Teorema Bayes</strong> dengan asumsi naif bahwa ke-4 atribut saling
             bebas (conditional independence).
           </p>
-          <img :src="imgKonsep" alt="Konsep Teorema Bayes" class="w-full rounded-xl border border-[#D5D3C9] bg-[#F8F7F2] p-3" />
+          <!-- Diagram visual: Input X → likelihood per kelas → argmax → prediksi -->
+          <div class="p-4 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0] space-y-3">
+            <div class="flex flex-wrap items-center justify-center gap-2">
+              <div class="px-3 py-2 rounded-lg bg-[#1F2937] text-white text-center text-xs font-bold shadow-xs">
+                INPUT X<br /><span class="text-[10px] font-normal text-gray-300">4 atribut warga</span>
+              </div>
+              <ArrowRight class="w-4 h-4 text-[#96B6C5]" />
+              <div class="flex gap-2">
+                <div class="px-3 py-2 rounded-lg bg-[#96B6C5] text-[#1A3B47] text-center text-xs font-semibold">
+                  P(Xᵢ|Layak)
+                </div>
+                <div class="px-3 py-2 rounded-lg bg-[#EEE0C9] text-[#4A3F30] text-center text-xs font-semibold">
+                  P(Xᵢ|Tdk Layak)
+                </div>
+              </div>
+              <ArrowRight class="w-4 h-4 text-[#96B6C5]" />
+              <div class="px-3 py-2 rounded-lg bg-white border-2 border-[#1F2937] text-center text-xs font-bold text-[#1F2937]">
+                Argmax P(C|X)
+              </div>
+            </div>
+            <p class="text-[11px] text-center text-[#9CA3AF]">Untuk tiap kelas, kalikan P(C) dengan likelihood tiap atribut → bandingkan.</p>
+          </div>
           <pre class="text-xs font-mono bg-[#F8F7F2] border border-[#D5D3C9] rounded-xl p-4 overflow-x-auto text-[#1F2937]">        P(C) × P(X₁|C) × P(X₂|C) × P(X₃|C) × P(X₄|C)
 P(C|X) = ───────────────────────────────────────────────────────
                           P(X)</pre>
@@ -378,10 +447,21 @@ P(C|X) = ───────────────────────�
 
         <section class="bg-white rounded-xl border border-[#D5D3C9] p-6 space-y-4">
           <h3 class="text-base font-bold text-[#1F2937]">Proses Training Model</h3>
-          <img :src="imgTraining" alt="Proses training: prior → likelihood + Laplace → simpan DB" class="w-full rounded-xl border border-[#D5D3C9] bg-[#F8F7F2] p-3" />
+          <div class="flex flex-col gap-2">
+            <template v-for="(s, i) in trainingSteps" :key="s.n">
+              <div class="flex items-center gap-3 p-3 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0] shadow-xs">
+                <div class="w-9 h-9 rounded-xl bg-[#1F2937] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">{{ s.n }}</div>
+                <component :is="s.icon" class="w-5 h-5 text-[#96B6C5] flex-shrink-0" />
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-[#1F2937]">{{ s.title }}</p>
+                  <p class="text-xs text-[#4B5563] whitespace-pre-line leading-snug font-mono">{{ s.sub }}</p>
+                </div>
+              </div>
+              <div v-if="i < trainingSteps.length - 1" class="flex justify-center text-[#96B6C5]"><ArrowDown class="w-5 h-5" /></div>
+            </template>
+          </div>
           <p class="text-sm text-[#4B5563]">Saat admin klik "Latih Ulang Model", backend menjalankan:</p>
           <ol class="space-y-2 text-sm text-[#4B5563] list-decimal list-inside">
-            <li><strong>Kumpulkan data latih</strong> — baca seluruh data_training (120 data: 60 layak, 60 tidak layak).</li>
             <li><strong>Prior P(C)</strong> — <code class="font-mono text-xs bg-[#F8F7F2] px-1.5 py-0.5 rounded border border-[#D5D3C9]">P(layak) = 60/120 = 0.50</code></li>
             <li><strong>Likelihood + Laplace</strong> — cegah zero probability: <code class="font-mono text-xs bg-[#F8F7F2] px-1.5 py-0.5 rounded border border-[#D5D3C9]">P(Xᵢ=k|C) = (Count+1) / (Count(C)+|Vᵢ|)</code></li>
             <li><strong>Simpan permanen</strong> — ke model_versions + model_probabilitas. Probabilitas tidak dihitung ulang tiap klasifikasi → sangat cepat.</li>
@@ -390,14 +470,28 @@ P(C|X) = ───────────────────────�
 
         <section class="bg-white rounded-xl border border-[#D5D3C9] p-6 space-y-4">
           <h3 class="text-base font-bold text-[#1F2937]">Proses Prediksi</h3>
-          <img :src="imgPrediksi" alt="Alur prediksi: input → binning → log-score → keputusan" class="w-full rounded-xl border border-[#D5D3C9] bg-[#F8F7F2] p-3" />
-          <ol class="space-y-2 text-sm text-[#4B5563] list-decimal list-inside">
-            <li><strong>Kategorisasi</strong> — nilai mentah → label bin (mis. Rp 1.500.000 → "1–2jt").</li>
-            <li><strong>Log-Score</strong> tiap kelas: <code class="font-mono text-xs bg-[#F8F7F2] px-1.5 py-0.5 rounded border border-[#D5D3C9]">LogScore(C) = ln P(C) + Σ ln P(Xᵢ|C)</code>. Dihitung di ruang logaritma agar tidak underflow.</li>
-            <li><strong>Normalisasi Log-Sum-Exp</strong> → persentase: <code class="font-mono text-xs bg-[#F8F7F2] px-1.5 py-0.5 rounded border border-[#D5D3C9]">P(C|X) = exp(LogScore(C)−MaxLog) / Σ exp(...)</code></li>
-            <li><strong>Prediksi</strong> = kelas probabilitas terbesar (seri → layak).</li>
-            <li><strong>Simpan breakdown</strong> (prior, likelihood tiap atribut, log-score) → status pending approval.</li>
-          </ol>
+          <div class="flex flex-col gap-2">
+            <template v-for="(s, i) in prediksiSteps" :key="s.n">
+              <div class="flex items-center gap-3 p-3 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0] shadow-xs">
+                <div class="w-9 h-9 rounded-xl bg-[#1F2937] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">{{ s.n }}</div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-[#1F2937]">{{ s.title }}</p>
+                  <p class="text-xs text-[#4B5563] font-mono leading-snug">{{ s.sub }}</p>
+                </div>
+              </div>
+              <div v-if="i < prediksiSteps.length - 1" class="flex justify-center text-[#96B6C5]"><ArrowDown class="w-5 h-5" /></div>
+            </template>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div class="p-3 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0]">
+              <p class="font-bold text-[#1F2937] text-xs uppercase tracking-wider">Log-Score</p>
+              <p class="text-[11px] text-[#4B5563] mt-1">Dihitung di ruang logaritma agar tidak underflow (LogScore(C) = ln P(C) + Σ ln P(Xᵢ|C)).</p>
+            </div>
+            <div class="p-3 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0]">
+              <p class="font-bold text-[#1F2937] text-xs uppercase tracking-wider">Normalisasi</p>
+              <p class="text-[11px] text-[#4B5563] mt-1">P(C|X) = exp(LogScore(C)−MaxLog) / Σ exp(...). Prediksi = terbesar (seri → layak).</p>
+            </div>
+          </div>
         </section>
 
         <section class="bg-white rounded-xl border border-[#D5D3C9] p-6 space-y-4">
@@ -413,18 +507,40 @@ P(C|X) = ───────────────────────�
 
         <section class="bg-white rounded-xl border border-[#D5D3C9] p-6 space-y-4">
           <h3 class="text-base font-bold text-[#1F2937]">Evaluasi Model</h3>
-          <img :src="imgEvaluasi" alt="Perbandingan Hold-out vs k-Fold" class="w-full rounded-xl border border-[#D5D3C9] bg-[#F8F7F2] p-3" />
+          <!-- Perbandingan metode -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-            <div class="p-3 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0]">
-              <p class="font-bold text-[#1F2937] text-xs uppercase tracking-wider">Hold-out</p>
-              <p class="text-xs text-[#4B5563] mt-1">Data dibagi: 80% dilatih, 20% diuji. Model dilatih ulang di train-split, diuji di test-split.</p>
+            <div class="p-3 rounded-xl bg-[#E6F0F4] border border-[#96B6C5]/30">
+              <p class="font-bold text-[#1A3B47] text-xs uppercase tracking-wider">Hold-out</p>
+              <p class="text-xs text-[#1A3B47] mt-1">Data dibagi: 80% dilatih, 20% diuji. Model dilatih ulang di train-split, diuji di test-split.</p>
             </div>
-            <div class="p-3 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0]">
-              <p class="font-bold text-[#1F2937] text-xs uppercase tracking-wider">k-Fold (stratified)</p>
-              <p class="text-xs text-[#4B5563] mt-1">Data dibagi 5 lipatan seimbang per kelas. Tiap lipatan diuji 1×, dilatih di 4 lain. Confusion matrix diakumulasi.</p>
+            <div class="p-3 rounded-xl bg-[#EEE0C9] border border-[#d2c5af]">
+              <p class="font-bold text-[#4A3F30] text-xs uppercase tracking-wider">k-Fold (stratified)</p>
+              <p class="text-xs text-[#4A3F30] mt-1">Data dibagi 5 lipatan seimbang per kelas. Tiap lipatan diuji 1×, dilatih di 4 lain. Confusion matrix diakumulasi.</p>
             </div>
           </div>
-          <img :src="imgConfusion" alt="Confusion matrix TP/TN/FP/FN" class="w-full rounded-xl border border-[#D5D3C9] bg-[#F8F7F2] p-3" />
+          <!-- Confusion matrix grid 2x2 -->
+          <div class="p-4 rounded-xl bg-[#F8F7F2] border border-[#EBE9E0]">
+            <p class="text-xs font-bold text-[#1F2937] mb-3 text-center">Confusion Matrix</p>
+            <div class="grid grid-cols-3 gap-2 text-xs max-w-md mx-auto font-mono">
+              <div></div>
+              <div class="text-center font-bold text-[#1F2937] bg-[#E6F0F4] py-2 rounded-lg">Pred: Layak</div>
+              <div class="text-center font-bold text-[#1F2937] bg-[#E6F0F4] py-2 rounded-lg">Pred: Tdk Layak</div>
+              <div class="text-right font-bold text-[#1F2937] flex items-center justify-end pr-2">Aktual: Layak</div>
+              <div class="bg-[#D4EDDA] border border-[#27AE60]/30 text-center py-3 rounded-xl font-bold text-[#155724] flex flex-col items-center justify-center">
+                <span>TP</span><span class="text-[9px] font-sans font-semibold uppercase">True Positive</span>
+              </div>
+              <div class="bg-[#F8D7DA] border border-[#721C24]/30 text-center py-3 rounded-xl font-bold text-[#721C24] flex flex-col items-center justify-center">
+                <span>FN</span><span class="text-[9px] font-sans font-semibold uppercase">False Negative</span>
+              </div>
+              <div class="text-right font-bold text-[#1F2937] flex items-center justify-end pr-2">Aktual: Tdk Layak</div>
+              <div class="bg-[#FFF3CD] border border-[#856404]/30 text-center py-3 rounded-xl font-bold text-[#856404] flex flex-col items-center justify-center">
+                <span>FP</span><span class="text-[9px] font-sans font-semibold uppercase">False Positive</span>
+              </div>
+              <div class="bg-[#F8F7F2] border border-[#D5D3C9] text-center py-3 rounded-xl font-bold text-[#1F2937] flex flex-col items-center justify-center">
+                <span>TN</span><span class="text-[9px] font-sans font-semibold uppercase text-[#4B5563]">True Negative</span>
+              </div>
+            </div>
+          </div>
           <pre class="text-xs font-mono bg-[#F8F7F2] border border-[#D5D3C9] rounded-xl p-4 overflow-x-auto text-[#1F2937]">Accuracy  = (TP + TN) / (TP + TN + FP + FN)
 Precision = TP / (TP + FP)
 Recall    = TP / (TP + FN)
