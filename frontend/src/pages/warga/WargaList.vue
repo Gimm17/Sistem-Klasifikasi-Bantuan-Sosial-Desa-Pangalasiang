@@ -74,11 +74,11 @@ const rupiah = (n) => 'Rp' + Number(n || 0).toLocaleString('id-ID')
           <Upload class="w-4 h-4 text-[#96B6C5]" />
           <span>Import</span>
         </button>
-        <button @click="exportCsv" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-[#D5D3C9] rounded-xl text-xs font-semibold text-[#1F2937] hover:bg-[#F8F7F2] shadow-xs transition-colors">
+        <button v-if="auth.role === 'admin' || auth.role === 'approver'" @click="exportCsv" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-[#D5D3C9] rounded-xl text-xs font-semibold text-[#1F2937] hover:bg-[#F8F7F2] shadow-xs transition-colors">
           <Download class="w-4 h-4 text-[#96B6C5]" />
           <span>Export CSV</span>
         </button>
-        <button @click="exportXlsx" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-[#D5D3C9] rounded-xl text-xs font-semibold text-[#1F2937] hover:bg-[#F8F7F2] shadow-xs transition-colors">
+        <button v-if="auth.role === 'admin' || auth.role === 'approver'" @click="exportXlsx" class="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-[#D5D3C9] rounded-xl text-xs font-semibold text-[#1F2937] hover:bg-[#F8F7F2] shadow-xs transition-colors">
           <FileSpreadsheet class="w-4 h-4 text-[#96B6C5]" />
           <span>Export Excel</span>
         </button>

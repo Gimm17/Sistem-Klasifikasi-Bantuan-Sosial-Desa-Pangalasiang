@@ -57,7 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // --- Master data warga ---
     Route::get('/warga', [WargaController::class, 'index'])->middleware('role:admin,approver');
     // Rute statis HARUS sebelum /warga/{warga} agar tak tertangkap sbg {id}.
-    Route::get('/warga/export', [ImportExportController::class, 'exportWarga'])->middleware('role:admin');
+    Route::get('/warga/export', [ImportExportController::class, 'exportWarga'])->middleware('role:admin,approver');
     Route::get('/warga/import/template', [ImportExportController::class, 'templateWarga'])->middleware('role:admin');
     Route::post('/warga/import', [ImportExportController::class, 'importWarga'])->middleware('role:admin');
     Route::get('/warga/{warga}', [WargaController::class, 'show'])->middleware('role:admin,approver');
