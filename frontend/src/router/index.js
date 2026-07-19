@@ -74,6 +74,10 @@ const routes = [
         path: 'evaluasi', name: 'evaluasi', component: () => import('@/pages/evaluasi/ModelEvaluasi.vue'),
         meta: { roles: ['admin', 'approver', 'superadmin'] },
       },
+      {
+        path: 'dokumentasi', name: 'dokumentasi', component: () => import('@/pages/docs/Dokumentasi.vue'),
+        meta: { roles: ['admin', 'approver', 'superadmin'] },
+      },
     ],
   },
   {
