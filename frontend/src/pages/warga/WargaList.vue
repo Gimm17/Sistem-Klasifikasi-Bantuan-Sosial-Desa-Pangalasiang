@@ -1,15 +1,16 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { Warga, downloadBlob } from '@/services/endpoints'
 import { useAuthStore } from '@/stores/auth'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import ImportModal from '@/components/ImportModal.vue'
 import Skeleton from '@/components/Skeleton.vue'
-import { Plus, FileSpreadsheet, Upload, Download, Search, Filter, Trash2, Edit, Eye, CheckCircle2, ChevronLeft, ChevronRight } from '@lucide/vue'
+import { Plus, FileSpreadsheet, Upload, Download, Search, Filter, Trash2, Edit, Eye, CheckCircle2, Camera, ChevronLeft, ChevronRight } from '@lucide/vue'
 
 const auth = useAuthStore()
+const router = useRouter()
 const items = ref([])
 const meta = ref(null)
 const loading = ref(false)
@@ -37,8 +38,8 @@ async function destroy(id, nama) {
 }
 
 async function validasi(id) {
-  await Warga.validasi(id)
-  load()
+  // Validasi sekarang lewat detail (modal tinjau foto + pilih label).
+  await router.push({ name: 'warga.show', params: { id }, query: { validasi: '1' } })
 }
 
 // Export (CSV & Excel), template (XLSX rapi), import multi-file (csv & xlsx)
@@ -120,6 +121,7 @@ const rupiah = (n) => 'Rp' + Number(n || 0).toLocaleString('id-ID')
                 <th class="text-left px-4 py-3.5 border-b border-[#EBE9E0]">Pekerjaan</th>
                 <th class="text-right px-4 py-3.5 border-b border-[#EBE9E0]">Penghasilan</th>
                 <th class="text-center px-4 py-3.5 border-b border-[#EBE9E0]">Tanggungan</th>
+                <th class="text-center px-4 py-3.5 border-b border-[#EBE9E0]">Foto</th>
                 <th class="text-center px-4 py-3.5 border-b border-[#EBE9E0]">Validasi</th>
                 <th class="text-right px-4 py-3.5 border-b border-[#EBE9E0]">Aksi</th>
               </tr>
@@ -131,6 +133,12 @@ const rupiah = (n) => 'Rp' + Number(n || 0).toLocaleString('id-ID')
                 <td class="px-4 py-3.5 text-[#4B5563]">{{ w.status_pekerjaan }}</td>
                 <td class="px-4 py-3.5 text-right font-mono tnum font-medium text-[#1F2937]">{{ rupiah(w.penghasilan_bulanan) }}</td>
                 <td class="px-4 py-3.5 text-center font-mono tnum text-[#1F2937] font-semibold">{{ w.jumlah_tanggungan }}</td>
+                <td class="px-4 py-3.5 text-center">
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold" :class="(w.foto_count ?? 0) < 1 ? 'text-[#856404]' : 'text-[#1A3B47]'">
+                    <Camera class="w-3.5 h-3.5" />
+                    <span class="tnum">{{ w.foto_count ?? 0 }}</span>
+                  </span>
+                </td>
                 <td class="px-4 py-3.5 text-center"><StatusBadge type="validasi" :value="w.status_validasi" /></td>
                 <td class="px-4 py-3.5 text-right space-x-1 whitespace-nowrap">
                   <RouterLink :to="{ name: 'warga.show', params: { id: w.id } }" title="Detail" class="inline-flex items-center justify-center p-1.5 text-[#1A3B47] hover:bg-[#E6F0F4] rounded-lg transition-colors">
@@ -149,11 +157,11 @@ const rupiah = (n) => 'Rp' + Number(n || 0).toLocaleString('id-ID')
               </tr>
               <template v-if="loading && !items.length">
                 <tr v-for="i in 5" :key="'sk'+i" class="border-b border-[#EBE9E0]">
-                  <td v-for="j in 7" :key="j" class="px-4 py-3.5"><Skeleton w="70%" h="12px" /></td>
+                  <td v-for="j in 8" :key="j" class="px-4 py-3.5"><Skeleton w="70%" h="12px" /></td>
                 </tr>
               </template>
               <tr v-else-if="!items.length">
-                <td colspan="7" class="px-4 py-10 text-center text-[#9CA3AF] text-sm font-medium">Tidak ada data warga ditemukan.</td>
+                <td colspan="8" class="px-4 py-10 text-center text-[#9CA3AF] text-sm font-medium">Tidak ada data warga ditemukan.</td>
               </tr>
             </tbody>
           </table>

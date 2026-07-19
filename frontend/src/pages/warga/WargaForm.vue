@@ -25,7 +25,7 @@ async function loadAtribut() {
   atribut.value = await Atribut.list()
   // default nilai pertama jika belum dipilih
   if (!form.status_pekerjaan && pekerjaanLabels.value.length) form.status_pekerjaan = pekerjaanLabels.value[0]
-  if (!form.kondisi_rumah && kondisiLabels.value.length) form.kondisi_rumah = kondisiLabels.value[0]
+  // kondisi_rumah TIDAK di-default — diisi saat validasi (setelah foto diunggah).
 }
 
 async function loadWarga() {
@@ -34,7 +34,7 @@ async function loadWarga() {
   Object.assign(form, {
     nik: w.nik, nama: w.nama, alamat: w.alamat ?? '', dusun: w.dusun ?? '',
     penghasilan_bulanan: w.penghasilan_bulanan, status_pekerjaan: w.status_pekerjaan,
-    jumlah_tanggungan: w.jumlah_tanggungan, kondisi_rumah: w.kondisi_rumah,
+    jumlah_tanggungan: w.jumlah_tanggungan, kondisi_rumah: w.kondisi_rumah ?? '',
     periode_data: w.periode_data,
   })
 }
@@ -45,9 +45,15 @@ async function submit() {
   saving.value = true; errors.value = {}
   try {
     const payload = { ...form, penghasilan_bulanan: Number(form.penghasilan_bulanan), jumlah_tanggungan: Number(form.jumlah_tanggungan) }
-    if (isEdit.value) await Warga.update(route.params.id, payload)
-    else await Warga.create(payload)
-    router.push({ name: 'warga.list' })
+    if (isEdit.value) {
+      await Warga.update(route.params.id, payload)
+      router.push({ name: 'warga.show', params: { id: route.params.id } })
+    } else {
+      const created = await Warga.create(payload)
+      // Arahkan ke detail agar langsung upload foto rumah + validasi.
+      const newId = created?.data?.id ?? created?.id
+      router.push({ name: 'warga.show', params: { id: newId } })
+    }
   } catch (e) {
     errors.value = e.response?.data?.errors ?? { _: [e.response?.data?.message ?? 'Gagal menyimpan'] }
   } finally {
@@ -129,10 +135,12 @@ async function submit() {
               <span v-if="errors.status_pekerjaan" class="text-xs text-[#DC3545] mt-1 block">{{ errors.status_pekerjaan[0] }}</span>
             </label>
             <label class="block">
-              <span class="text-xs font-semibold uppercase tracking-wider text-[#4B5563]">Kondisi Rumah <span class="text-[#DC3545]">*</span></span>
+              <span class="text-xs font-semibold uppercase tracking-wider text-[#4B5563]">Kondisi Rumah</span>
               <select v-model="form.kondisi_rumah" class="mt-1.5 w-full bg-[#F8F7F2] border border-[#D5D3C9] rounded-xl px-3.5 py-2.5 text-sm text-[#1F2937] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#96B6C5] focus:border-transparent transition-all">
+                <option value="">— Diisi saat validasi —</option>
                 <option v-for="l in kondisiLabels" :key="l" :value="l">{{ l }}</option>
               </select>
+              <span class="text-[11px] text-[#9CA3AF] mt-1 block">Label wajib dipilih saat validasi setelah foto rumah diunggah. Bisa diisi sekarang jika sudah pasti.</span>
               <span v-if="errors.kondisi_rumah" class="text-xs text-[#DC3545] mt-1 block">{{ errors.kondisi_rumah[0] }}</span>
             </label>
             <label class="block md:col-span-2">

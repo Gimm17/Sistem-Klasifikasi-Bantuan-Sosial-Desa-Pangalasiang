@@ -8,6 +8,7 @@ use App\Models\Warga;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Rekapitulasi per dusun & export PDF (Rekap Dusun, Rincian Warga, Rincian KK).
@@ -148,11 +149,34 @@ class RekapitulasiController extends Controller
     public function pdfRincianKk(Request $request, Warga $warga)
     {
         $warga->load('latestHasil.approver', 'createdBy');
-        
+
+        // Opsi sertakan foto rumah (?include_foto=1). Embed base64 agar dompdf
+        // tidak perlu isRemoteEnabled (paling andal di shared host).
+        $includeFoto = $request->boolean('include_foto');
+        $fotosBase64 = [];
+        if ($includeFoto) {
+            $warga->load('fotos');
+            foreach ($warga->fotos as $foto) {
+                $abs = Storage::disk('public')->path($foto->path);
+                if (! is_file($abs)) {
+                    continue;
+                }
+                $data = file_get_contents($abs);
+                $ext = strtolower(pathinfo($foto->path, PATHINFO_EXTENSION));
+                $mime = match ($ext) {
+                    'png' => 'image/png',
+                    'webp' => 'image/webp',
+                    default => 'image/jpeg',
+                };
+                $fotosBase64[] = 'data:'.$mime.';base64,'.base64_encode($data);
+            }
+        }
+
         $html = view('laporan.rincian_kk', [
             'warga' => $warga,
             'hasil' => $warga->latestHasil,
             'dicetak' => now(),
+            'fotos' => $fotosBase64,
         ])->render();
 
         $pdf = app('dompdf.wrapper')->loadHtml($html);

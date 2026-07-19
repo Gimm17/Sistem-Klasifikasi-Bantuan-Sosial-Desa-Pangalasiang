@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $totalWarga = Warga::count();
         $divalidasi = Warga::where('status_validasi', 'divalidasi')->count();
 
-        $hasil = HasilKlasifikasi::whereIn('id', function ($q) {
+        $hasil = HasilKlasifikasi::whereHas('warga')->whereIn('id', function ($q) {
             // hasil terbaru per warga
             $q->from('hasil_klasifikasi')
                 ->selectRaw('MAX(id)')
@@ -59,7 +59,8 @@ class DashboardController extends Controller
 
         $evaluasiTerakhir = \App\Models\ModelEvaluasi::latest('id')->first();
 
-        $pendingTerbaru = HasilKlasifikasi::with('warga')
+        $pendingTerbaru = HasilKlasifikasi::whereHas('warga')
+            ->with('warga')
             ->where('status_approval', 'pending')
             ->latest('id')
             ->take(5)

@@ -25,7 +25,9 @@ class ApprovalController extends Controller
 {
     public function queue(Request $request): AnonymousResourceCollection
     {
-        $query = HasilKlasifikasi::where('status_approval', 'pending')
+        // whereHas('warga') singkirkan hasil warga yang sudah dihapus (lihat KlasifikasiController::index).
+        $query = HasilKlasifikasi::whereHas('warga')
+            ->where('status_approval', 'pending')
             ->with(['warga', 'approver']);
 
         if ($s = $request->query('prediksi_kelas')) {

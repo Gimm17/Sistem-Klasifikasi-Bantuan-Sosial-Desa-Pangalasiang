@@ -20,14 +20,18 @@ class UpdateWargaRequest extends FormRequest
         $kondisiLabels = $this->kategoriLabels('kondisi_rumah');
 
         return [
-            'nik' => ['required', 'string', 'digits:16', Rule::unique('warga', 'nik')->ignore($wargaId)],
+            // unique HANYA cek baris yang belum di-soft-delete (lihat catatan StoreWargaRequest).
+            'nik' => ['required', 'string', 'digits:16', Rule::unique('warga', 'nik')->ignore($wargaId)->whereNull('deleted_at')],
             'nama' => ['required', 'string', 'max:255'],
             'alamat' => ['nullable', 'string', 'max:1000'],
             'dusun' => ['nullable', 'string', 'max:100'],
             'penghasilan_bulanan' => ['required', 'integer', 'min:0', 'max:100000000'],
             'status_pekerjaan' => ['required', 'string', Rule::in($pekerjaanLabels)],
             'jumlah_tanggungan' => ['required', 'integer', 'min:0', 'max:20'],
-            'kondisi_rumah' => ['required', 'string', Rule::in($kondisiLabels)],
+            // kondisi_rumah nullable di draft — diisi saat validasi (setelah foto diunggah).
+            // Admin boleh ubah label kapan saja (termasuk setelah divalidasi), tapi harus tetap
+            // salah satu kategori aktif bila diisi.
+            'kondisi_rumah' => ['nullable', 'string', Rule::in($kondisiLabels)],
             'periode_data' => ['required', 'date'],
         ];
     }
