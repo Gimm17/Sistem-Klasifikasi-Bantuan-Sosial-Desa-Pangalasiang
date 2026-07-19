@@ -43,6 +43,12 @@ class Warga extends Model
         return $this->hasMany(DataTraining::class);
     }
 
+    /** Galeri foto rumah (dokumentasi kondisi rumah). Diurutkan by urutan. */
+    public function fotos(): HasMany
+    {
+        return $this->hasMany(WargaFoto::class)->orderBy('urutan');
+    }
+
     protected function casts(): array
     {
         return [

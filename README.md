@@ -74,3 +74,27 @@ Lihat [docs/implementation_plan.md](./docs/implementation_plan.md) untuk detail 
 | 8 — Blackbox testing | ✅ selesai (lihat [BLACKBOX_TEST_RESULTS.md](./BLACKBOX_TEST_RESULTS.md)) |
 | 9 — Dokumentasi skripsi | ✅ selesai (lihat [docs/SKRIPSI_LAMPIRAN.md](./docs/SKRIPSI_LAMPIRAN.md)) |
 | **+** Fitur tambahan (Import/Export CSV & **XLSX** + bulk upload multi-file untuk **warga & data training**, penegakan batasan periode #3, filter export, laporan PDF, audit log) | ✅ selesai |
+| **+** Galeri foto rumah + **label kondisi_rumah saat validasi manual** + lightbox preview (revisi stakeholder) | ✅ selesai |
+| **+** Soft-delete warga + **NIK reusable** + sembunyikan hasil yatim (dashboard/klasifikasi/approval) | ✅ selesai |
+| **+** PDF Rincian KK opsional **sertakan foto rumah** (`?include_foto=1`) | ✅ selesai |
+| **+** **Deploy produksi** `https://siklas.pinnhost.my.id` (cPanel, PHP 8.4, LiteSpeed, MySQL) | ✅ selesai |
+
+## Pengujian otomatis
+
+Feature test PHPUnit **33/33 lulus** (112 assertion):
+- `tests/Unit/NaiveBayesServiceTest.php` — verifikasi matematis mesin NB (7 test).
+- `tests/Feature/WargaFotoTest.php` — galeri foto + validasi (8 test).
+- `tests/Feature/WargaSoftDeleteTest.php` — NIK reuse + hasil yatim (3 test).
+- `tests/Feature/ImportWargaTest.php` — CSV/XLSX + bulk (5 test).
+- `tests/Feature/KlasifikasiPeriodeTest.php` — batasan #3 (data N bulan terakhir).
+
+```bash
+cd backend && php artisan test      # 33/33
+```
+
+## Deploy ke cPanel
+
+Lihat [`PANDUAN_AKSES_CPANEL_SSH.md`](./PANDUAN_AKSES_CPANEL_SSH.md) (SSH via paramiko, tarball + SFTP).
+Produksi: `https://siklas.pinnhost.my.id`. Gotcha kritis: root `.htaccess` perlu
+`RewriteRule ^storage/(.*)$ public/storage/$1 [L]` agar URL `/storage/...` (foto rumah)
+terlayani (docroot = project root, bukan `public/`).

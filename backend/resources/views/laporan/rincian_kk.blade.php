@@ -102,8 +102,8 @@
             <tr>
                 <td class="center">4</td>
                 <td>Kondisi Tempat Tinggal / Rumah</td>
-                <td>{{ $warga->kondisi_rumah }}</td>
-                <td style="font-weight: bold; color: #1A3B47;">{{ $hasil?->kategori_input['kondisi_rumah'] ?? $warga->kondisi_rumah }}</td>
+                <td>{{ $warga->kondisi_rumah ?: '(belum dilabeli)' }}</td>
+                <td style="font-weight: bold; color: #1A3B47;">{{ $hasil?->kategori_input['kondisi_rumah'] ?? $warga->kondisi_rumah ?? '-' }}</td>
             </tr>
         </tbody>
     </table>
@@ -130,6 +130,23 @@
             <div class="result-label">STATUS KLASIFIKASI</div>
             <div class="result-val" style="color: #6B7280; font-size: 14px;">BELUM DIKLASIFIKASI OLEH SISTEM</div>
         </div>
+    @endif
+
+    @if(!empty($fotos))
+    <div class="section-title">D. DOKUMENTASI KONDISI RUMAH</div>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 14px;">
+        <tr>
+            @foreach($fotos as $i => $src)
+                <td style="width: 33%; padding: 4px; vertical-align: top; text-align: center; page-break-inside: avoid;">
+                    <img src="{{ $src }}" style="width: 100%; max-height: 120px; object-fit: cover; border: 1px solid #96B6C5; border-radius: 3px;" />
+                    <div style="font-size: 8px; color: #6B7280; margin-top: 3px;">Foto {{ $i + 1 }}</div>
+                </td>
+                @if($loop->iteration % 3 === 0 && !$loop->last)
+        </tr><tr>
+                @endif
+            @endforeach
+        </tr>
+    </table>
     @endif
 
     <table class="ttd-box">

@@ -28,14 +28,18 @@ class StoreWargaRequest extends FormRequest
         $kondisiLabels = $this->kategoriLabels('kondisi_rumah');
 
         return [
-            'nik' => ['required', 'string', 'digits:16', 'unique:warga,nik'],
+            // unique HANYA cek baris yang belum di-soft-delete, agar NIK warga yang
+            // sudah dihapus boleh dipakai ulang. Rule::unique pakai DB langsung (bukan
+            // scope SoftDeletes model) → harus eksplisit whereNull('deleted_at').
+            'nik' => ['required', 'string', 'digits:16', Rule::unique('warga', 'nik')->whereNull('deleted_at')],
             'nama' => ['required', 'string', 'max:255'],
             'alamat' => ['nullable', 'string', 'max:1000'],
             'dusun' => ['nullable', 'string', 'max:100'],
             'penghasilan_bulanan' => ['required', 'integer', 'min:0', 'max:100000000'],
             'status_pekerjaan' => ['required', 'string', Rule::in($pekerjaanLabels)],
             'jumlah_tanggungan' => ['required', 'integer', 'min:0', 'max:20'],
-            'kondisi_rumah' => ['required', 'string', Rule::in($kondisiLabels)],
+            // kondisi_rumah nullable di draft — diisi saat validasi (setelah foto diunggah).
+            'kondisi_rumah' => ['nullable', 'string', Rule::in($kondisiLabels)],
             'periode_data' => ['required', 'date'],
         ];
     }
@@ -44,7 +48,7 @@ class StoreWargaRequest extends FormRequest
     {
         return [
             'nik.digits' => 'NIK harus tepat 16 digit.',
-            'nik.unique' => 'NIK sudah terdaftar.',
+            'nik.unique' => 'NIK sudah terdaftar (warga masih aktif). Jika warga sebelumnya sudah dihapus, NIK boleh dipakai ulang.',
             'penghasilan_bulanan.min' => 'Penghasilan minimal 0.',
             'jumlah_tanggungan.max' => 'Jumlah tanggungan tidak masuk akal (maks 20).',
             'status_pekerjaan.in' => 'Status pekerjaan harus salah satu kategori yang tersedia.',

@@ -159,7 +159,9 @@ class KlasifikasiController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = HasilKlasifikasi::query()->with(['warga', 'approver']);
+        // whereHas('warga') menyaring hasil milik warga yang sudah di-soft-delete,
+        // agar UI tidak menampilkan baris dengan nama warga kosong (yatim).
+        $query = HasilKlasifikasi::query()->whereHas('warga')->with(['warga', 'approver']);
 
         if ($s = $request->query('status_approval')) {
             $query->where('status_approval', $s);

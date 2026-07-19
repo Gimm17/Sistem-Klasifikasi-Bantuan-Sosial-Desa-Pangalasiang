@@ -36,7 +36,15 @@ export const Warga = {
   create: (data) => api.post('/api/warga', data).then((r) => r.data),
   update: (id, data) => api.put(`/api/warga/${id}`, data).then((r) => r.data),
   remove: (id) => api.delete(`/api/warga/${id}`),
-  validasi: (id) => api.patch(`/api/warga/${id}/validasi`).then((r) => r.data),
+  validasi: (id, payload) => api.patch(`/api/warga/${id}/validasi`, payload).then((r) => r.data),
+  listFotos: (id) => api.get(`/api/warga/${id}/fotos`).then((r) => r.data.data),
+  // files = File[] / FileList. Multipart (mirror importFiles pattern).
+  uploadFotos: (id, files) => {
+    const fd = new FormData()
+    Array.from(files).forEach((f, i) => fd.append(`fotos[${i}]`, f))
+    return api.post(`/api/warga/${id}/fotos`, fd, { headers: { 'Content-Type': 'multipart/form-data' } }).then((r) => r.data)
+  },
+  removeFoto: (wargaId, fotoId) => api.delete(`/api/warga/${wargaId}/fotos/${fotoId}`),
   exportCsv: (params) => api.get('/api/warga/export', { responseType: 'blob', params: { ...params, format: 'csv' } }).then((r) => r.data),
   exportXlsx: (params) => api.get('/api/warga/export', { responseType: 'blob', params: { ...params, format: 'xlsx' } }).then((r) => r.data),
   // format: 'xlsx' (default, rapi + dropdown) atau 'csv'

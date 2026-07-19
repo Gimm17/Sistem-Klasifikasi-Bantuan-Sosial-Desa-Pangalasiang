@@ -66,6 +66,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/warga/{warga}/validasi', [WargaController::class, 'validasi'])->middleware('role:admin');
     Route::delete('/warga/{warga}', [WargaController::class, 'destroy'])->middleware('role:admin');
 
+    // --- Galeri foto rumah (dokumentasi kondisi rumah) ---
+    Route::get('/warga/{warga}/fotos', [WargaController::class, 'listFotos'])->middleware('role:admin,approver');
+    Route::post('/warga/{warga}/fotos', [WargaController::class, 'storeFotos'])->middleware('role:admin');
+    Route::delete('/warga/{warga}/fotos/{foto}', [WargaController::class, 'destroyFoto'])->middleware('role:admin');
+
     // --- Model Naive Bayes (training & versi) — admin & superadmin ---
     Route::post('/model/train', [ModelController::class, 'train'])->middleware('role:admin,superadmin');
     Route::get('/model/versions', [ModelController::class, 'versions'])->middleware('role:admin,superadmin');
