@@ -16,7 +16,8 @@ import {
   Building2,
   Map,
   Menu,
-  X
+  X,
+  HelpCircle
 } from '@lucide/vue'
 
 const auth = useAuthStore()
@@ -40,6 +41,7 @@ const navItems = [
   { to: { name: 'klasifikasi.index' }, label: 'Klasifikasi', icon: BrainCircuit, roles: ['admin', 'approver'] },
   { to: { name: 'approval' }, label: 'Antrean Approval', icon: ClipboardCheck, roles: ['approver'] },
   { to: { name: 'evaluasi' }, label: 'Evaluasi Model', icon: BarChart3, roles: ['admin', 'approver', 'superadmin'] },
+  { to: { name: 'dokumentasi' }, label: 'Dokumentasi', icon: HelpCircle, roles: ['admin', 'approver', 'superadmin'] },
 ]
 
 const visibleNav = computed(() => navItems.filter((i) => i.roles.includes(auth.role)))

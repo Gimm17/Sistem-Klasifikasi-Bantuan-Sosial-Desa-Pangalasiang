@@ -6,6 +6,9 @@
 # 1. User-requested exclusions (docs, design, scratch files)
 # ──────────────────────────────────────────────────────────
 docs/
+# Exception: halaman Dokumentasi SPA adalah source code, bukan
+# dokumen proyek — tetap di-track meski nama foldernya "docs/".
+!frontend/src/pages/docs/
 documentation/
 design_plan/
 chtGPT.txt
