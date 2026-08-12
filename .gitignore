@@ -19,6 +19,8 @@ claude --resume ea65a309-3e6a-4636-a349-734cf20d875f.txt
 claude --resume 0f772b69-be6b-4580-b58f-ca2c8edd7174.txt
 claude --resume 28525b08-720b-4d5b-9c28-1cbf11aaa75d.txt
 claude --resume dd2fe04e-30cd-4786-8428-74a0e24b6c60.txt
+claude --resume eeaeb2be-a6ff-4379-9ba0-aaa07072b14f.txt
+claude --resume 8a348bad-a7c9-4487-a341-47a328bdf7ce.txt
 id_rsa.ppk
 id_rsa
 id_rsa.pub
@@ -87,6 +89,7 @@ Thumbs.db
 .zed/
 .cursor/
 .codex/
+.commandcode/
 
 # ──────────────────────────────────────────────────────────
 # 6. Logs & cache
@@ -114,3 +117,12 @@ lerna-debug.log*
 # 8. Temporary / generated files
 # ──────────────────────────────────────────────────────────
 generate_sample_pdfs.php
+
+# ──────────────────────────────────────────────────────────
+# 9. Data mentah & hasil import (sumber data desa / sensitif)
+# ──────────────────────────────────────────────────────────
+JUMLAH_KK_PANGALASIANG.xlsx
+warga_pangalasiang_import.xlsx
+warga_pangalasiang_import_validated.xlsx
+warga_pangalasiang_import.csv
+kondisi_rumah.jpeg
