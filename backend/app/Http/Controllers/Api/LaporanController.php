@@ -72,6 +72,10 @@ class LaporanController extends Controller
     /** Cetak laporan hasil klasifikasi ke PDF. */
     public function pdf(Request $request)
     {
+        // dompdf render 800+ baris butuh alokasi besar; naikkan memory utk request ini.
+        @ini_set('memory_limit', '512M');
+        @ini_set('max_execution_time', '300');
+
         $hasil = $this->query($request);
 
         $html = view('laporan.klasifikasi', [
