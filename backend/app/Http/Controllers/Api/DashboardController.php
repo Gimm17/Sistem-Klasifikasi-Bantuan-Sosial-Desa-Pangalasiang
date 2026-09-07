@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DataTraining;
 use App\Models\HasilKlasifikasi;
+use App\Models\ModelEvaluasi;
+use App\Models\ModelProbabilitas;
 use App\Models\ModelVersion;
 use App\Models\Warga;
 use Illuminate\Http\JsonResponse;
@@ -35,10 +38,10 @@ class DashboardController extends Controller
         // Hitung atribut paling berpengaruh dari model aktif (Likelihood divergence)
         $atributBerpengaruh = [];
         if ($modelAktif) {
-            $probs = \App\Models\ModelProbabilitas::where('model_version', $modelAktif->model_version)
+            $probs = ModelProbabilitas::where('model_version', $modelAktif->model_version)
                 ->whereNotNull('atribut_kode')
                 ->get();
-            
+
             $grouped = $probs->groupBy('atribut_kode');
             foreach ($grouped as $kode => $items) {
                 $cats = $items->groupBy('kategori');
@@ -54,10 +57,10 @@ class DashboardController extends Controller
                     'score' => round(($totalDiff / 2) * 100, 1),
                 ];
             }
-            usort($atributBerpengaruh, fn($a, $b) => $b['score'] <=> $a['score']);
+            usort($atributBerpengaruh, fn ($a, $b) => $b['score'] <=> $a['score']);
         }
 
-        $evaluasiTerakhir = \App\Models\ModelEvaluasi::latest('id')->first();
+        $evaluasiTerakhir = ModelEvaluasi::latest('id')->first();
 
         $pendingTerbaru = HasilKlasifikasi::whereHas('warga')
             ->with('warga')
@@ -77,6 +80,8 @@ class DashboardController extends Controller
             });
 
         return response()->json([
+            'total_populasi_kk' => config('penelitian.populasi_kk'),
+            'target_sampel' => config('penelitian.target_sampel'),
             'total_warga' => $totalWarga,
             'warga_divalidasi' => $divalidasi,
             'total_layak' => $totalLayak,
@@ -99,7 +104,7 @@ class DashboardController extends Controller
                 'count_tidak_layak' => $modelAktif->count_tidak_layak,
                 'created_at' => $modelAktif->created_at,
             ] : null,
-            'total_data_training' => \App\Models\DataTraining::count(),
+            'total_data_training' => DataTraining::count(),
             'atribut_berpengaruh' => $atributBerpengaruh,
             'evaluasi_terakhir' => $evaluasiTerakhir ? [
                 'accuracy' => $evaluasiTerakhir->accuracy,

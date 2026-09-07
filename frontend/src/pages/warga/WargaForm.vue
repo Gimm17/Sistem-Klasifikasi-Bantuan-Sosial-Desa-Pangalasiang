@@ -110,6 +110,9 @@ async function submit() {
             <option value="Dusun III">Dusun III</option>
             <option value="Dusun IV">Dusun IV</option>
             <option value="Dusun V">Dusun V</option>
+            <option value="Dusun VI">Dusun VI</option>
+            <option value="Dusun VII">Dusun VII</option>
+            <option value="Dusun VIII">Dusun VIII</option>
           </select>
         </label>
 
@@ -161,4 +164,3 @@ async function submit() {
     </div>
   </div>
 </template>
-

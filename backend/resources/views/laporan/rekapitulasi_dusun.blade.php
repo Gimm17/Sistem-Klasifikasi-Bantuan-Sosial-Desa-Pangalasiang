@@ -14,7 +14,7 @@
         .judul-laporan h3 { font-size: 14px; margin: 0 0 4px; text-decoration: underline; text-transform: uppercase; }
         .judul-laporan p { font-size: 10px; margin: 0; color: #4B5563; }
         .stats-grid { width: 100%; margin-bottom: 16px; border-collapse: collapse; }
-        .stats-grid td { width: 25%; padding: 8px; border: 1px solid #D5D3C9; background: #F8F7F2; text-align: center; }
+        .stats-grid td { width: 20%; padding: 8px; border: 1px solid #D5D3C9; background: #F8F7F2; text-align: center; }
         .stats-label { font-size: 9px; color: #4B5563; text-transform: uppercase; margin-bottom: 4px; display: block; font-weight: bold; }
         .stats-value { font-size: 14px; font-weight: bold; color: #1A3B47; }
         table.data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -51,16 +51,20 @@
                 <span class="stats-value">{{ $data['total_dusun'] }} Wilayah</span>
             </td>
             <td>
-                <span class="stats-label">Total Warga Terdata</span>
-                <span class="stats-value">{{ $data['total_warga'] }} Jiwa</span>
+                <span class="stats-label">Populasi Lapangan</span>
+                <span class="stats-value">{{ $data['total_populasi_kk'] }} KK</span>
+            </td>
+            <td>
+                <span class="stats-label">Target Sampel</span>
+                <span class="stats-value">{{ $data['target_sampel'] }} KK</span>
+            </td>
+            <td>
+                <span class="stats-label">Sampel Terdata</span>
+                <span class="stats-value">{{ $data['total_warga'] }} KK</span>
             </td>
             <td>
                 <span class="stats-label">Dusun Tertinggi (Layak)</span>
                 <span class="stats-value">{{ $data['dusun_tertinggi']['dusun'] ?? '-' }} ({{ $data['dusun_tertinggi']['pct_layak'] ?? 0 }}%)</span>
-            </td>
-            <td>
-                <span class="stats-label">Rata-rata Probabilitas</span>
-                <span class="stats-value">{{ $data['rata_rata_prob_layak'] }}%</span>
             </td>
         </tr>
     </table>
@@ -70,7 +74,9 @@
             <tr>
                 <th style="width: 30px;">No</th>
                 <th>Nama Dusun / Wilayah</th>
-                <th style="width: 80px;">Total Warga</th>
+                <th style="width: 65px;">Populasi KK</th>
+                <th style="width: 65px;">Target Sampel</th>
+                <th style="width: 65px;">Sampel Terdata</th>
                 <th style="width: 70px;">Layak</th>
                 <th style="width: 70px;">Tidak Layak</th>
                 <th style="width: 110px;">Persentase Layak</th>
@@ -82,6 +88,8 @@
                 <tr>
                     <td class="center">{{ $index + 1 }}</td>
                     <td style="font-weight: bold; color: #1A3B47;">{{ $row['dusun'] }}</td>
+                    <td class="num">{{ $row['populasi_kk'] }}</td>
+                    <td class="num">{{ $row['target_sampel'] }}</td>
                     <td class="num">{{ $row['total_warga'] }}</td>
                     <td class="num" style="color: #27AE60; font-weight: bold;">{{ $row['layak'] }}</td>
                     <td class="num" style="color: #6B7280;">{{ $row['tidak_layak'] }}</td>
@@ -95,12 +103,14 @@
                 </tr>
             @endforeach
             @if(empty($data['detail']))
-                <tr><td colspan="7" class="center">Belum ada data rekapitulasi dusun.</td></tr>
+                <tr><td colspan="9" class="center">Belum ada data rekapitulasi dusun.</td></tr>
             @endif
         </tbody>
         <tfoot>
             <tr>
                 <th colspan="2">TOTAL KESELURUHAN</th>
+                <th class="num">{{ $data['total_populasi_kk'] }}</th>
+                <th class="num">{{ $data['target_sampel'] }}</th>
                 <th class="num">{{ $data['total_warga'] }}</th>
                 <th class="num" style="color: #27AE60;">{{ $data['total_layak'] }}</th>
                 <th class="num">{{ $data['total_tidak_layak'] }}</th>
