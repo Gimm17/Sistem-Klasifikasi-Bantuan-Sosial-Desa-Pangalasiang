@@ -42,9 +42,7 @@ async function load() {
 onMounted(load)
 
 const cards = (s) => [
-  { label: 'Populasi KK', value: s.total_populasi_kk, color: 'text-[#1F2937]', bg: 'bg-white border-[#D5D3C9]', icon: Users, iconBg: 'bg-[#E6F0F4] text-[#1A3B47]' },
-  { label: 'Target Sampel', value: s.target_sampel, color: 'text-[#1A3B47]', bg: 'bg-white border-[#D5D3C9]', icon: ClipboardCheck, iconBg: 'bg-[#E6F0F4] text-[#1A3B47]' },
-  { label: 'Sampel Terdata', value: s.total_warga, color: 'text-[#1F2937]', bg: 'bg-white border-[#D5D3C9]', icon: Users, iconBg: 'bg-[#E6F0F4] text-[#1A3B47]' },
+  { label: 'Total Warga', value: s.total_warga, color: 'text-[#1F2937]', bg: 'bg-white border-[#D5D3C9]', icon: Users, iconBg: 'bg-[#E6F0F4] text-[#1A3B47]' },
   { label: 'Warga Divalidasi', value: s.warga_divalidasi, color: 'text-[#1A3B47]', bg: 'bg-white border-[#D5D3C9]', icon: UserCheck, iconBg: 'bg-[#E6F0F4] text-[#1A3B47]' },
   { label: 'Terprediksi Layak', value: s.total_layak, color: 'text-[#155724]', bg: 'bg-white border-[#D5D3C9]', icon: CheckCircle2, iconBg: 'bg-[#D4EDDA] text-[#155724]' },
   { label: 'Tidak Layak', value: s.total_tidak_layak, color: 'text-[#721C24]', bg: 'bg-white border-[#D5D3C9]', icon: XCircle, iconBg: 'bg-[#F8D7DA] text-[#721C24]' },
@@ -71,9 +69,9 @@ const cards = (s) => [
       </div>
 
       <!-- Kartu statistik -->
-      <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <template v-if="loading && !stats">
-          <div v-for="i in 8" :key="'sk'+i" class="bg-white rounded-xl border border-[#D5D3C9] shadow-xs p-4 flex flex-col justify-between">
+          <div v-for="i in 6" :key="'sk'+i" class="bg-white rounded-xl border border-[#D5D3C9] shadow-xs p-4 flex flex-col justify-between">
             <div class="flex items-center justify-between gap-2 mb-3">
               <Skeleton w="70px" h="12px" />
               <Skeleton variant="rect" w="32px" h="32px" rounded="lg" />

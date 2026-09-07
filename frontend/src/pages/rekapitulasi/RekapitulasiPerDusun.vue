@@ -45,7 +45,7 @@ const maxTidak = computed(() => {
     <div class="p-6 space-y-6">
       <!-- Skeleton saat loading -->
       <template v-if="loading">
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div v-for="i in 4" :key="'sk-card'+i" class="bg-white rounded-xl p-5 border border-[#D5D3C9] shadow-xs flex flex-col gap-3">
             <div class="flex items-center justify-between">
               <Skeleton w="120px" h="12px" />
@@ -78,16 +78,6 @@ const maxTidak = computed(() => {
               </span>
             </div>
             <p class="text-2xl font-bold text-[#1F2937]">{{ data.total_dusun }}</p>
-          </div>
-
-          <div class="bg-white rounded-xl p-5 border border-[#D5D3C9] shadow-[0_1px_3px_rgba(0,0,0,0.06)] flex flex-col gap-3">
-            <p class="text-xs font-semibold uppercase tracking-wider text-[#4B5563]">Populasi Lapangan</p>
-            <p class="text-2xl font-bold text-[#1F2937]">{{ data.total_populasi_kk }} KK</p>
-          </div>
-
-          <div class="bg-white rounded-xl p-5 border border-[#D5D3C9] shadow-[0_1px_3px_rgba(0,0,0,0.06)] flex flex-col gap-3">
-            <p class="text-xs font-semibold uppercase tracking-wider text-[#4B5563]">Target Sampel</p>
-            <p class="text-2xl font-bold text-[#1A3B47]">{{ data.target_sampel }} KK</p>
           </div>
 
           <div class="bg-white rounded-xl p-5 border border-[#D5D3C9] shadow-[0_1px_3px_rgba(0,0,0,0.06)] flex flex-col gap-3 relative overflow-hidden">
@@ -133,7 +123,7 @@ const maxTidak = computed(() => {
         <section class="bg-white rounded-xl border border-[#D5D3C9] shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden">
           <div class="p-5 border-b border-[#EBE9E0] bg-[#F8F7F2]/50 flex justify-between items-center">
             <h3 class="font-bold text-[#1F2937] text-base">Rincian Per Dusun</h3>
-            <span class="text-xs text-[#4B5563]">Sampel terdata: {{ data.total_warga }} dari {{ data.target_sampel }} KK</span>
+            <span class="text-xs text-[#4B5563]">Total warga terdata: {{ data.total_warga }}</span>
           </div>
 
           <div v-if="!data.detail?.length" class="p-8 text-center text-[#9CA3AF] text-sm">
@@ -141,14 +131,12 @@ const maxTidak = computed(() => {
           </div>
 
           <div v-else class="overflow-x-auto">
-            <table class="w-full text-left border-collapse min-w-[950px]">
+            <table class="w-full text-left border-collapse min-w-[700px]">
               <thead>
                 <tr class="bg-[#E6F0F4]/60">
                   <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0] w-12 text-center">No</th>
                   <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0]">Nama Dusun</th>
-                  <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0] text-right">Populasi KK</th>
-                  <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0] text-right">Target Sampel</th>
-                  <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0] text-right">Sampel Terdata</th>
+                  <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0] text-right">Total Warga</th>
                   <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0] text-right">Layak</th>
                   <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0] text-right">Tidak Layak</th>
                   <th class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-[#1F2937] border-b border-[#EBE9E0] text-right">% Layak</th>
@@ -159,8 +147,6 @@ const maxTidak = computed(() => {
                 <tr v-for="(d, i) in data.detail" :key="d.dusun" class="hover:bg-[#F8F7F2] transition-colors">
                   <td class="px-4 py-3.5 text-center text-xs text-[#4B5563]">{{ i + 1 }}</td>
                   <td class="px-4 py-3.5 font-semibold text-[#446370] text-sm">{{ d.dusun }}</td>
-                  <td class="px-4 py-3.5 text-right text-sm font-medium">{{ d.populasi_kk }}</td>
-                  <td class="px-4 py-3.5 text-right text-sm font-medium text-[#1A3B47]">{{ d.target_sampel }}</td>
                   <td class="px-4 py-3.5 text-right text-sm font-medium">{{ d.total_warga }}</td>
                   <td class="px-4 py-3.5 text-right text-sm font-semibold text-[#27AE60]">{{ d.layak }}</td>
                   <td class="px-4 py-3.5 text-right text-sm text-[#4B5563]">{{ d.tidak_layak }}</td>
@@ -178,8 +164,6 @@ const maxTidak = computed(() => {
               <tfoot class="bg-[#F8F7F2]/50 text-xs font-semibold border-t-2 border-[#D5D3C9]">
                 <tr>
                   <td colspan="2" class="px-4 py-3.5 text-right font-bold text-[#1F2937]">TOTAL KESELURUHAN</td>
-                  <td class="px-4 py-3.5 text-right font-bold text-[#1F2937]">{{ data.total_populasi_kk }}</td>
-                  <td class="px-4 py-3.5 text-right font-bold text-[#1A3B47]">{{ data.target_sampel }}</td>
                   <td class="px-4 py-3.5 text-right font-bold text-[#1F2937]">{{ data.total_warga }}</td>
                   <td class="px-4 py-3.5 text-right font-bold text-[#27AE60]">{{ data.total_layak }}</td>
                   <td class="px-4 py-3.5 text-right font-bold text-[#4B5563]">{{ data.total_tidak_layak }}</td>
