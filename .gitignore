@@ -127,3 +127,9 @@ warga_pangalasiang_import_validated.xlsx
 warga_pangalasiang_import.csv
 kondisi_rumah.jpeg
 /outputs/
+
+skripsi/
+*pwsupersecret*
+claude --resume *.txt
+*.tar.gz
+*.zip
