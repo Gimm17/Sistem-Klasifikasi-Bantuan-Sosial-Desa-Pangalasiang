@@ -133,3 +133,10 @@ skripsi/
 claude --resume *.txt
 *.tar.gz
 *.zip
+
+# Security: ignore secrets, credentials, dumps & backups
+cpanel.txt
+*CPANEL*.txt
+*cpanel*.txt
+*secret*.txt
+github-access-token*.txt
